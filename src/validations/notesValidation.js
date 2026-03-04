@@ -5,7 +5,10 @@ import { isValidObjectId } from "mongoose";
 
 
 const objectIdValidator = (value, helpers) => {
-  return !isValidObjectId(value) ? helpers.mssage('Invalid id format') : value;
+  if (!isValidObjectId(value)) {
+    return helpers.message({ custom: "Invalid id format" });
+  }
+  return value;
 };
 
 
@@ -22,22 +25,22 @@ export const getAllNotesSchema = {
 export const noteIdSchema = {
   [Segments.PARAMS]: Joi.object({
     noteId: Joi.string().custom(objectIdValidator).required(),
-  })
+  }).required(),
 };
 
 
 export const createNoteSchema = {
-  [Segments.PARAMS]: Joi.object({
+  [Segments.BODY]: Joi.object({
     title: Joi.string().min(1).required(),
-    content: Joi.string().allow(""),
-    tag: Joi.string().valid(...TAGS),
-  })
+    content: Joi.string().allow("").optional(),
+    tag: Joi.string().valid(...TAGS).optional(),
+  }),
 };
 
 export const updateNoteSchema = {
   [Segments.PARAMS]: Joi.object({
     noteId: Joi.string().custom(objectIdValidator).required(),
-  }),
+  }).required(),
   [Segments.BODY]: Joi.object({
     title: Joi.string().min(1),
     content: Joi.string().allow(""),
