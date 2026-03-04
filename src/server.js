@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import { errors } from "celebrate";
 import "dotenv/config";
 
 import { connectMongoDB } from "./db/connectMongoDB.js";
@@ -20,7 +21,7 @@ app.use(cors());
 app.use(router);
 
 app.use(notFoundHandler);
-
+app.use(errors());
 app.use(errorHandler);
 
 await connectMongoDB();
