@@ -1,4 +1,5 @@
 import createHttpError from "http-errors";
+import { User } from "../models/user.js";
 import { saveFileToCloudinary } from "../utils/saveFileToCloudinary.js";
 
 export async function updateUserAvatar(req, res, next) {
@@ -10,10 +11,17 @@ export async function updateUserAvatar(req, res, next) {
     const result = await saveFileToCloudinary(req.file.buffer);
     const url = result.secure_url;
 
-    req.user.avatar = url;
-    await req.user.save();
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { avatar: url },
+      { returnDocument: "after" }
+    );
 
-    res.status(200).json({ url });
+    if (!updatedUser) {
+      throw createHttpError(404, "User not found");
+    }
+
+    res.status(200).json({ url: updatedUser.avatar });
   } catch (err) {
     next(err);
   }

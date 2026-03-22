@@ -39,7 +39,9 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", function (next) {
-  this.username = this.email;
+  if (this.username == null || this.username === "") {
+    this.username = this.email;
+  }
   next();
 });
 

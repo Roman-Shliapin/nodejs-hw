@@ -151,6 +151,7 @@ export async function requestResetEmail(req, res, next) {
     try {
       await sendEmail({
         to: user.email,
+        from: process.env.SMTP_FROM,
         subject: "Скидання паролю",
         html,
       });
