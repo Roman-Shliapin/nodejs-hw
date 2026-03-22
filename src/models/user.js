@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 
+const defaultAvatar =
+  "https://ac.goit.global/fullstack/react/default-avatar.jpg";
+
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -18,6 +21,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 8,
     },
+    avatar: {
+      type: String,
+      required: false,
+      default: defaultAvatar,
+    },
   },
   {
     timestamps: true,
@@ -31,9 +39,7 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.pre("save", function (next) {
-  if (this.isNew && (this.username == null || this.username === "")) {
-    this.username = this.email;
-  }
+  this.username = this.email;
   next();
 });
 
